@@ -87,10 +87,6 @@ int main(void)
 	shader->Bind();
 	shader->SetUniformMat4f("u_MVP", mvp);
 
-	Texture* texture = new Texture("res/textures/Tree.png");
-	texture->Bind();
-	shader->SetUniform1i("u_Texture", 0);
-
 	va->Unbind();
 	vb->Unbind();
 	ib->Unbind();
@@ -133,7 +129,6 @@ int main(void)
 	delete ib;
 	delete layout;
 	delete shader;
-	delete texture;
 	delete renderer;
 
 	glfwTerminate();
