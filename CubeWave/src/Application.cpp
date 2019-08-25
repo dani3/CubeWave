@@ -31,7 +31,7 @@ int main(void)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Create a windowed mode window and its OpenGL context
-	window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+	window = glfwCreateWindow(800, 800, "CubeWave", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -76,8 +76,8 @@ int main(void)
 	
 	IndexBuffer* ib = new IndexBuffer(indices, 6);
 
-	// Specify the bounds of the window to set the correct aspect ratio (4:3)
-	glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+	// Specify the bounds of the window to set the correct aspect ratio (1:1)
+	glm::mat4 proj = glm::ortho(0.0f, 800.0f, 0.0f, 800.0f, -1.0f, 1.0f);
 	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
 	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 
