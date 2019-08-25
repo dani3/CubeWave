@@ -11,7 +11,6 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h"
-#include "Texture.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -62,10 +61,6 @@ int main(void)
 		0, 1, 2,
 		2, 3, 0
 	};
-
-	// Enable blending
-	GLCall(glEnable(GL_BLEND));
-	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 	VertexArray* va = new VertexArray();
 	VertexBuffer* vb = new VertexBuffer(positions, 4 * 4 * sizeof(float));
