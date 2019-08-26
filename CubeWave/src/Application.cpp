@@ -16,7 +16,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-float Map(float fromMin, float fromMax, float toMin, float toMax, float value);
+#define CUBE_SIZE		25
 
 int main(void)
 {
@@ -55,7 +55,7 @@ int main(void)
 
 	glEnable(GL_DEPTH_TEST);
 
-	Cube cube(glm::vec3(0.0f, 0.0f, 0.0f), 50.f, 50.f);
+	Cube cube(glm::vec3(0.0f, 0.0f, 0.0f), CUBE_SIZE);
 
 	float* positions = cube.GetVertices();
 	unsigned int* indices = cube.GetIndices();
@@ -77,15 +77,11 @@ int main(void)
 	view = glm::rotate(view, glm::radians(35.264f), glm::vec3(1.0f, 0.0f, 0.0f));
 	view = glm::rotate(view, glm::radians(45.f), glm::vec3(0.0f, -1.0f, 0.0f));
 	
-	// Model matrix
-	glm::mat4 model = glm::mat4(1.0f);
-
 	Shader* shader = new Shader("res/shaders/Basic.shader");
 	shader->Bind();
-	shader->SetUniformMat4f("u_Model", model);
 	shader->SetUniformMat4f("u_View", view);
 	shader->SetUniformMat4f("u_Projection", proj);
-	shader->SetUniform4f("u_Color", .2f, .2f, .5f, 1.0f);
+	shader->SetUniform4f("u_Color", .49f, .6f, .6f, 1.0f);
 
 	va->Unbind();
 	vb->Unbind();
@@ -94,24 +90,22 @@ int main(void)
 
 	Renderer* renderer = new Renderer();
 
-	float angle = 0;
-
+	shader->Bind();
 	// Loop until the user closes the window
 	while (!glfwWindowShouldClose(window))
 	{
 		/* Render here */
 		renderer->Clear();
 
-		float scaleFactor = Map(-1.0f, 1.0f, 1, 5, glm::sin(glm::radians(angle)));
-		model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(1, scaleFactor, 1));
+		for (int i = 0; i < 6; ++i)
+		{
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, glm::vec3(i * CUBE_SIZE * 1.25f, 50.0f, 0.0f));
 
-		shader->Bind();
-		shader->SetUniformMat4f("u_Model", model);
+			shader->SetUniformMat4f("u_Model", model);
 
-		renderer->Draw(*va, *ib, *shader);	
-
-		angle += 1.0f;
+			renderer->Draw(*va, *ib, *shader);
+		}
 
 		// Swap front and back buffers
 		glfwSwapBuffers(window);
@@ -127,9 +121,6 @@ int main(void)
 	delete renderer;
 
 	glfwTerminate();
-	return 0;
-}
 
-static float Map(float fromMin, float fromMax, float toMin, float toMax, float value) {
-	return toMin + (value - fromMin) * (toMax - toMin) / (fromMax - fromMin);
+	return 0;
 }

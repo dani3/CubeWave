@@ -43,8 +43,6 @@ ShaderProgramSource Shader::ParseShader(const std::string& filepath)
 	ShaderType type = ShaderType::NONE;
 	while (getline(stream, line))
 	{
-		std::cout << "Cuuucu" << std::endl;
-
 		if (line.find("#shader") != std::string::npos)
 		{
 			if (line.find("vertex") != std::string::npos)
@@ -62,7 +60,6 @@ ShaderProgramSource Shader::ParseShader(const std::string& filepath)
 		}
 	}
 
-	std::cout << "Cucu " << ss[0].str() << std::endl;
 	std::cout << ss[1].str() << std::endl;
 
 	return { ss[0].str(), ss[1].str() };
