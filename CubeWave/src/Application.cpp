@@ -51,10 +51,11 @@ int main(void)
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
+	glEnable(GL_DEPTH_TEST);
+
 	Cube cube(glm::vec3(0.0f, 0.0f, 0.0f), 50.f, 50.f);
 
 	float* positions = cube.GetVertices();
-
 	unsigned int* indices = cube.GetIndices();
 
 	VertexArray* va = new VertexArray();
@@ -97,7 +98,7 @@ int main(void)
 		renderer->Clear();
 
 		model = glm::mat4(1.0f);
-		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f));
 		shader->Bind();
 		shader->SetUniformMat4f("u_Model", model);
 
