@@ -16,6 +16,8 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+float Map(float fromMin, float fromMax, float toMin, float toMax, float value);
+
 int main(void)
 {
 	GLFWwindow* window;
@@ -77,7 +79,6 @@ int main(void)
 	
 	// Model matrix
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0, 0, 0));
 
 	Shader* shader = new Shader("res/shaders/Basic.shader");
 	shader->Bind();
@@ -93,13 +94,24 @@ int main(void)
 
 	Renderer* renderer = new Renderer();
 
+	float angle = 0;
+
 	// Loop until the user closes the window
 	while (!glfwWindowShouldClose(window))
 	{
 		/* Render here */
 		renderer->Clear();
 
+		float scaleFactor = Map(-1.0f, 1.0f, 1, 5, glm::sin(glm::radians(angle)));
+		model = glm::mat4(1.0f);
+		model = glm::scale(model, glm::vec3(1, scaleFactor, 1));
+
+		shader->Bind();
+		shader->SetUniformMat4f("u_Model", model);
+
 		renderer->Draw(*va, *ib, *shader);	
+
+		angle += 1.0f;
 
 		// Swap front and back buffers
 		glfwSwapBuffers(window);
@@ -116,4 +128,8 @@ int main(void)
 
 	glfwTerminate();
 	return 0;
+}
+
+static float Map(float fromMin, float fromMax, float toMin, float toMax, float value) {
+	return toMin + (value - fromMin) * (toMax - toMin) / (fromMax - fromMin);
 }
