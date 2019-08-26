@@ -65,16 +65,23 @@ int main(void)
 	
 	IndexBuffer* ib = new IndexBuffer(indices, 36);
 
-	// Specify the bounds of the window to set the correct aspect ratio (1:1)
+	// Projection matrix
 	glm::mat4 proj = glm::ortho(0.0f, 800.0f, 0.0f, 800.0f, -800.0f, 800.0f);
-	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-
-	glm::mat4 mvp = proj * view * model;
+	
+	// View matrix
+	glm::mat4 view = glm::mat4(1.0f);
+	view = glm::rotate(view, glm::radians(5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	
+	// Model matrix
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0, 0, 0));
 
 	Shader* shader = new Shader("res/shaders/Basic.shader");
 	shader->Bind();
-	shader->SetUniformMat4f("u_MVP", mvp);
+	shader->SetUniformMat4f("u_Model", model);
+	shader->SetUniformMat4f("u_View", view);
+	shader->SetUniformMat4f("u_Projection", proj);
+	shader->SetUniform4f("u_Color", .2f, .2f, .5f, 1.0f);
 
 	va->Unbind();
 	vb->Unbind();
@@ -88,9 +95,6 @@ int main(void)
 	{
 		/* Render here */
 		renderer->Clear();
-
-		shader->Bind();
-		shader->SetUniform4f("u_Color", .2f, .2f, .5f, 1.0f);
 
 		renderer->Draw(*va, *ib, *shader);	
 
