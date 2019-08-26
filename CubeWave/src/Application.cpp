@@ -11,6 +11,7 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h"
+#include "Cube.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -50,30 +51,23 @@ int main(void)
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
-	float positions[] = {
-		300.f, 300.f, 0.0f, 0.0f,
-		500.f, 300.f, 1.0f, 0.0f,
-		500.f, 500.f, 1.0f, 1.0f,
-		300.f, 500.f, 0.0f, 1.0f
-	};
+	Cube cube(glm::vec3(400.0f, 400.0f, -400.0f), 50.f, 50.f);
 
-	unsigned int indices[] = {
-		0, 1, 2,
-		2, 3, 0
-	};
+	float* positions = cube.GetVertices();
+
+	unsigned int* indices = cube.GetIndices();
 
 	VertexArray* va = new VertexArray();
-	VertexBuffer* vb = new VertexBuffer(positions, 4 * 4 * sizeof(float));
+	VertexBuffer* vb = new VertexBuffer(positions, 24 * sizeof(float));
 	VertexBufferLayout* layout = new VertexBufferLayout();
-	layout->Push<float>(2);
-	layout->Push<float>(2);
+	layout->Push<float>(3);
 	va->AddBuffer(*vb, *layout);
 	
-	IndexBuffer* ib = new IndexBuffer(indices, 6);
+	IndexBuffer* ib = new IndexBuffer(indices, 36);
 
 	// Specify the bounds of the window to set the correct aspect ratio (1:1)
-	glm::mat4 proj = glm::ortho(0.0f, 800.0f, 0.0f, 800.0f, -1.0f, 1.0f);
-	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+	glm::mat4 proj = glm::ortho(0.0f, 800.0f, 0.0f, 800.0f, -800.0f, 800.0f);
+	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 
 	glm::mat4 mvp = proj * view * model;
