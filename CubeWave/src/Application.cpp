@@ -51,7 +51,7 @@ int main(void)
 
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
-	Cube cube(glm::vec3(400.0f, 400.0f, -400.0f), 50.f, 50.f);
+	Cube cube(glm::vec3(0.0f, 0.0f, 0.0f), 50.f, 50.f);
 
 	float* positions = cube.GetVertices();
 
@@ -66,11 +66,11 @@ int main(void)
 	IndexBuffer* ib = new IndexBuffer(indices, 36);
 
 	// Projection matrix
-	glm::mat4 proj = glm::ortho(0.0f, 800.0f, 0.0f, 800.0f, -800.0f, 800.0f);
+	glm::mat4 proj = glm::ortho(-400.0f, 400.0f, -400.0f, 400.0f, -1000.0f, 1000.0f);
 	
 	// View matrix
 	glm::mat4 view = glm::mat4(1.0f);
-	view = glm::rotate(view, glm::radians(5.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -100.0f));
 	
 	// Model matrix
 	glm::mat4 model = glm::mat4(1.0f);
@@ -95,6 +95,11 @@ int main(void)
 	{
 		/* Render here */
 		renderer->Clear();
+
+		model = glm::mat4(1.0f);
+		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+		shader->Bind();
+		shader->SetUniformMat4f("u_Model", model);
 
 		renderer->Draw(*va, *ib, *shader);	
 
