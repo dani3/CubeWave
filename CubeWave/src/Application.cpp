@@ -83,8 +83,6 @@ int main(void)
 
 	Renderer* renderer = new Renderer();
 
-	float r = 0.0f;
-	float increment = 0.05f;
 	// Loop until the user closes the window
 	while (!glfwWindowShouldClose(window))
 	{
@@ -92,20 +90,9 @@ int main(void)
 		renderer->Clear();
 
 		shader->Bind();
-		shader->SetUniform4f("u_Color", r, .2f, .5f, 1.0f);
+		shader->SetUniform4f("u_Color", .2f, .2f, .5f, 1.0f);
 
-		renderer->Draw(*va, *ib, *shader);
-
-		if (r > 1.0f)
-		{
-			increment = -.05f;
-		}
-		else if (r < 0.0f)
-		{
-			increment = .05f;
-		}
-
-		r += increment;		
+		renderer->Draw(*va, *ib, *shader);	
 
 		// Swap front and back buffers
 		glfwSwapBuffers(window);
