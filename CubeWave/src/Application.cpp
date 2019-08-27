@@ -16,7 +16,10 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#define CUBE_SIZE		25
+#define CUBE_SIZE		15
+#define NUM_CUBES		16
+
+float Map(float fromMin, float fromMax, float toMin, float toMax, float value);
 
 int main(void)
 {
@@ -91,21 +94,37 @@ int main(void)
 	Renderer* renderer = new Renderer();
 
 	shader->Bind();
+
+	float maxD = glm::distance(glm::vec3((NUM_CUBES / 2) * CUBE_SIZE, 50.f, (NUM_CUBES / 2) * CUBE_SIZE), glm::vec3(0.0f, 50.f, 0.0f));
+	float angle = 0;
 	// Loop until the user closes the window
 	while (!glfwWindowShouldClose(window))
 	{
 		/* Render here */
 		renderer->Clear();
 
-		for (int i = 0; i < 6; ++i)
+		for (int j = 0; j < NUM_CUBES; ++j)
 		{
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(i * CUBE_SIZE * 1.25f, 50.0f, 0.0f));
+			for (int i = 0; i < NUM_CUBES; ++i)
+			{
+				float dist = glm::distance(glm::vec3(i * CUBE_SIZE * 1.25f, 50.0f, j * CUBE_SIZE * 1.25f), glm::vec3(0.0f, 0.0f, 0.0f));
+				float offset = Map(0.0f, maxD, -10, 10, dist);	
+				float newAngle = angle + offset;
+				float scaleFactor = Map(-1.0f, 1.0f, 5, 25, glm::sin(glm::radians(newAngle)));
 
-			shader->SetUniformMat4f("u_Model", model);
+				glm::mat4 model = glm::mat4(1.0f);
+				model = glm::translate(model, glm::vec3(i * CUBE_SIZE * 1.25f, 50.0f, j * CUBE_SIZE * 1.25f));
+				model = glm::scale(model, glm::vec3(1, scaleFactor, 1));
 
-			renderer->Draw(*va, *ib, *shader);
+				shader->SetUniformMat4f("u_Model", model);
+
+				renderer->Draw(*va, *ib, *shader);
+
+				offset += 360.0f / 16.0f;
+			}
 		}
+
+		angle += 3;
 
 		// Swap front and back buffers
 		glfwSwapBuffers(window);
@@ -123,4 +142,9 @@ int main(void)
 	glfwTerminate();
 
 	return 0;
+}
+
+static float Map(float fromMin, float fromMax, float toMin, float toMax, float value) 
+{
+	return toMin + (value - fromMin) * (toMax - toMin) / (fromMax - fromMin);
 }
