@@ -1,2 +1,3 @@
 # CubeWave
-Waving animation done in Rust
+
+Waving animation done in C++
