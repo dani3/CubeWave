@@ -15,7 +15,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#define CUBE_SIZE		25
+#define CUBE_SIZE		22
 #define NUM_CUBES		16
 
 float Map(float fromMin, float fromMax, float toMin, float toMax, float value);
@@ -35,7 +35,7 @@ int main(void)
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Create a windowed mode window and its OpenGL context
-	window = glfwCreateWindow(800, 800, "CubeWave", NULL, NULL);
+	window = glfwCreateWindow(968, 968, "CubeWave", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -44,6 +44,18 @@ int main(void)
 
 	// Make the window's context current
 	glfwMakeContextCurrent(window);
+
+	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+	int monitorX, monitorY;
+	glfwGetMonitorPos(monitor, &monitorX, &monitorY);
+
+	int windowWidth, windowHeight;
+	glfwGetWindowSize(window, &windowWidth, &windowHeight);
+
+	glfwSetWindowPos(window,
+		monitorX + (mode->width - windowWidth) / 2,
+		monitorY + (mode->height - windowHeight) / 2);
 
 	glfwSwapInterval(1);
 
@@ -78,7 +90,7 @@ int main(void)
 	
 	// View matrix
 	glm::mat4 view = glm::mat4(1.0f);
-	view = glm::translate(view, glm::vec3(0.0f, 100.0f, -100.0f));
+	view = glm::translate(view, glm::vec3(0.0f, 75.0f, 0.0f));
 	view = glm::rotate(view, glm::radians(35.264f), glm::vec3(1.0f, 0.0f, 0.0f));
 	view = glm::rotate(view, glm::radians(45.f), glm::vec3(0.0f, -1.0f, 0.0f));
 	
@@ -108,14 +120,14 @@ int main(void)
 		{
 			for (int i = 0; i < NUM_CUBES; ++i)
 			{
-				float dist = glm::distance(glm::vec3(i * CUBE_SIZE * 1.25f, 0.0f, j * CUBE_SIZE * 1.25f), glm::vec3(0.0f, 0.0f, 0.0f));
-				float offset = Map(0.0f, maxD, -50, 50, dist);	
+				float dist = glm::distance(glm::vec3(i * CUBE_SIZE, 0.0f, j * CUBE_SIZE), glm::vec3(NUM_CUBES * CUBE_SIZE / 2, 0.0f, NUM_CUBES * CUBE_SIZE / 2));
+				float offset = Map(0.0f, maxD, -150, 150, dist);	
 				float newAngle = angle + offset;
-				float scaleFactor = Map(-1.0f, 1.0f, 5, 25, glm::sin(glm::radians(newAngle)));
+				float scaleFactor = Map(-1.0f, 1.0f, 5, 15, glm::sin(glm::radians(newAngle)));
 
 				glm::mat4 model = glm::mat4(1.0f);
-				model = glm::translate(model, glm::vec3(i * CUBE_SIZE * 1.25f, 50.0f, j * CUBE_SIZE * 1.25f));
-				//model = glm::scale(model, glm::vec3(1, /*scaleFactor*/1, 1));
+				model = glm::translate(model, glm::vec3(i * CUBE_SIZE, 50.0f, j * CUBE_SIZE));
+				model = glm::scale(model, glm::vec3(1, scaleFactor, 1));
 
 				shader->SetUniformMat4f("u_Model", model);
 
@@ -123,7 +135,7 @@ int main(void)
 			}
 		}
 
-		angle += 3;
+		angle -= 3;
 
 		// Swap front and back buffers
 		glfwSwapBuffers(window);
