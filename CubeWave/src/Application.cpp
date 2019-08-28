@@ -8,7 +8,6 @@
 
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
-#include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h"
 #include "Cube.h"
@@ -16,7 +15,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
-#define CUBE_SIZE		15
+#define CUBE_SIZE		25
 #define NUM_CUBES		16
 
 float Map(float fromMin, float fromMax, float toMin, float toMax, float value);
@@ -58,25 +57,33 @@ int main(void)
 
 	glEnable(GL_DEPTH_TEST);
 
+	// Create one cube
 	Cube cube(glm::vec3(0.0f, 0.0f, 0.0f), CUBE_SIZE);
 
-	float* positions = cube.GetVertices();
-	unsigned int* indices = cube.GetIndices();
+	float* vertices    = cube.GetVertices();
+	unsigned int count = cube.GetCount();
+	unsigned int size  = cube.GetSize();
 
-	VertexArray* va = new VertexArray();
-	VertexBuffer* vb = new VertexBuffer(positions, 24 * sizeof(float));
+	for (int i = 0; i < count; ++i)
+	{
+		std::cout << vertices[i] << std::endl;
+	}
+
+	VertexArray* va            = new VertexArray();
+	VertexBuffer* vb           = new VertexBuffer(vertices, size);
 	VertexBufferLayout* layout = new VertexBufferLayout();
+
 	layout->Push<float>(3);
+	layout->Push<float>(3);
+
 	va->AddBuffer(*vb, *layout);
-	
-	IndexBuffer* ib = new IndexBuffer(indices, 36);
 
 	// Projection matrix
 	glm::mat4 proj = glm::ortho(-400.0f, 400.0f, -400.0f, 400.0f, -1000.0f, 1000.0f);
 	
 	// View matrix
 	glm::mat4 view = glm::mat4(1.0f);
-	view = glm::translate(view, glm::vec3(0.0f, 0.0f, -100.0f));
+	view = glm::translate(view, glm::vec3(0.0f, 100.0f, -100.0f));
 	view = glm::rotate(view, glm::radians(35.264f), glm::vec3(1.0f, 0.0f, 0.0f));
 	view = glm::rotate(view, glm::radians(45.f), glm::vec3(0.0f, -1.0f, 0.0f));
 	
@@ -88,14 +95,13 @@ int main(void)
 
 	va->Unbind();
 	vb->Unbind();
-	ib->Unbind();
 	shader->Unbind();
 
 	Renderer* renderer = new Renderer();
 
 	shader->Bind();
 
-	float maxD = glm::distance(glm::vec3((NUM_CUBES / 2) * CUBE_SIZE, 50.f, (NUM_CUBES / 2) * CUBE_SIZE), glm::vec3(0.0f, 50.f, 0.0f));
+	float maxD = glm::distance(glm::vec3((NUM_CUBES / 2) * CUBE_SIZE, 0.f, (NUM_CUBES / 2) * CUBE_SIZE), glm::vec3(0.0f, 0.f, 0.0f));
 	float angle = 0;
 	// Loop until the user closes the window
 	while (!glfwWindowShouldClose(window))
@@ -107,20 +113,18 @@ int main(void)
 		{
 			for (int i = 0; i < NUM_CUBES; ++i)
 			{
-				float dist = glm::distance(glm::vec3(i * CUBE_SIZE * 1.25f, 50.0f, j * CUBE_SIZE * 1.25f), glm::vec3(0.0f, 0.0f, 0.0f));
-				float offset = Map(0.0f, maxD, -10, 10, dist);	
+				float dist = glm::distance(glm::vec3(i * CUBE_SIZE * 1.25f, 0.0f, j * CUBE_SIZE * 1.25f), glm::vec3(0.0f, 0.0f, 0.0f));
+				float offset = Map(0.0f, maxD, -50, 50, dist);	
 				float newAngle = angle + offset;
 				float scaleFactor = Map(-1.0f, 1.0f, 5, 25, glm::sin(glm::radians(newAngle)));
 
 				glm::mat4 model = glm::mat4(1.0f);
 				model = glm::translate(model, glm::vec3(i * CUBE_SIZE * 1.25f, 50.0f, j * CUBE_SIZE * 1.25f));
-				model = glm::scale(model, glm::vec3(1, scaleFactor, 1));
+				//model = glm::scale(model, glm::vec3(1, /*scaleFactor*/1, 1));
 
 				shader->SetUniformMat4f("u_Model", model);
 
-				renderer->Draw(*va, *ib, *shader);
-
-				offset += 360.0f / 16.0f;
+				renderer->Draw(*va, count, *shader);
 			}
 		}
 
@@ -134,7 +138,6 @@ int main(void)
 	}
 
 	delete vb;
-	delete ib;
 	delete layout;
 	delete shader;
 	delete renderer;
