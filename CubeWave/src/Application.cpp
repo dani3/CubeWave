@@ -64,11 +64,6 @@ int main(void)
 	unsigned int count = cube.GetCount();
 	unsigned int size  = cube.GetSize();
 
-	for (int i = 0; i < count; ++i)
-	{
-		std::cout << vertices[i] << std::endl;
-	}
-
 	VertexArray* va            = new VertexArray();
 	VertexBuffer* vb           = new VertexBuffer(vertices, size);
 	VertexBufferLayout* layout = new VertexBufferLayout();
