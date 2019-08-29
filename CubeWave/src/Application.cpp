@@ -1,7 +1,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <iostream>
 #include <string>
 
 #include "Renderer.h"
@@ -11,6 +10,7 @@
 #include "VertexArray.h"
 #include "Shader.h"
 #include "Cube.h"
+#include "Log.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -25,6 +25,8 @@ int main(void)
 	GLFWwindow* window;
 
 	// Initialize the library
+
+	LOG("Initializing GLFW");
 	if (!glfwInit())
 	{
 		return -1;
@@ -57,19 +59,23 @@ int main(void)
 		monitorX + (mode->width - windowWidth) / 2,
 		monitorY + (mode->height - windowHeight) / 2);
 
+	LOG("Calculated position");
+
 	glfwSwapInterval(1);
 
+	LOG("Initializing GLEW");
 	if (glewInit() != GLEW_OK)
 	{
-		std::cout << "Error initializing GLEW" << std::endl;
+		LOG("Error initializing GLEW");
 		return 0;
 	}
 
-	std::cout << glGetString(GL_VERSION) << std::endl;
+	LOG("Using " << glGetString(GL_VERSION) << "OpenGL version");
 
 	glEnable(GL_DEPTH_TEST);
 
 	// Create one cube
+	LOG("Creating cube");
 	Cube cube(glm::vec3(0.0f, 0.0f, 0.0f), CUBE_SIZE);
 
 	float* vertices    = cube.GetVertices();
@@ -85,6 +91,7 @@ int main(void)
 
 	va->AddBuffer(*vb, *layout);
 
+	LOG("Setting up the camera");
 	// Projection matrix
 	glm::mat4 proj = glm::ortho(-400.0f, 400.0f, -400.0f, 400.0f, -1000.0f, 1000.0f);
 	

@@ -1208,5 +1208,8 @@
     <ClInclude Include="src\Cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Log.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
