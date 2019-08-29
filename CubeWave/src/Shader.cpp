@@ -1,11 +1,11 @@
 #include "Shader.h"
 
-#include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
 
 #include "Renderer.h"
+#include "Log.h"
 
 Shader::Shader(const std::string& filepath)
 	: m_FilePath(filepath), m_RendererID(0)
@@ -38,6 +38,8 @@ ShaderProgramSource Shader::ParseShader(const std::string& filepath)
 		NONE = -1, VERTEX = 0, FRAGMENT = 1
 	};
 
+	LOG("Loading shader");
+
 	std::string line;
 	std::stringstream ss[2];
 	ShaderType type = ShaderType::NONE;
@@ -59,8 +61,6 @@ ShaderProgramSource Shader::ParseShader(const std::string& filepath)
 			ss[(int)type] << line << '\n';
 		}
 	}
-
-	std::cout << ss[1].str() << std::endl;
 
 	return { ss[0].str(), ss[1].str() };
 }
